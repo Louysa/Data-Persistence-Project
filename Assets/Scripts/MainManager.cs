@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class MainManager : MonoBehaviour
 {
@@ -18,10 +20,19 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    public Text playerNameText;
+    private MenuScript Instance;
+    private string playerName;
     
+
+   
+
     // Start is called before the first frame update
     void Start()
     {
+        Instance = FindObjectOfType<MenuScript>();
+        playerName = Instance.playerName;
+        playerNameText.text = "Best Score: " + Instance.highScore + " Name : " + playerName;
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -52,6 +63,10 @@ public class MainManager : MonoBehaviour
                 Ball.transform.SetParent(null);
                 Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
+
+            
+
+            
         }
         else if (m_GameOver)
         {
@@ -71,6 +86,13 @@ public class MainManager : MonoBehaviour
     public void GameOver()
     {
         m_GameOver = true;
+        if(Instance.highScore < m_Points)
+        {
+            Instance.highScore = m_Points;
+            PlayerPrefs.SetInt("HighScore", m_Points);
+            Instance.playerName = playerName;
+            playerNameText.text = "Best Score: " + m_Points + " Name : " + playerName;
+        }
         GameOverText.SetActive(true);
     }
 }
